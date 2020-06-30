@@ -25,14 +25,12 @@ public class Volleyball : MonoBehaviour
         bounceVelocity = new Vector2(0.2f, 15.0f);
         spikeVelocity = new Vector2(25.0f, 0.5f);
 
-        Main.onTapped += BallTap;
-
+        Main.onTap += HitBall;
     }
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        BallTap();
+
     }
 
     private void FixedUpdate()
@@ -68,8 +66,12 @@ public class Volleyball : MonoBehaviour
      * Do I need to seperate the physics action from the state update into two methods?
      * (one for Update and FixedUpdate each)
      */
+    //private Vector2 BallVelocity(Vector2 velocity)
+    //{
+    //    return new Vector2 (0, 0);
+    //}
 
-    private void BallTap()
+    private void HitBall()
     {
         switch (state)
         {
@@ -88,7 +90,7 @@ public class Volleyball : MonoBehaviour
                 //rb.AddForce(spikeVelocity, ForceMode2D.Impulse);
                 break;
             case State.Spiked:
-                
+                // Lock the ball
                 // Call the delegate using event
                 break;
         }
@@ -96,7 +98,6 @@ public class Volleyball : MonoBehaviour
 
     private void OnDisable()
     {
-        Main.onTapped -= BallTap;
+        Main.onTap -= HitBall;
     }
-
 }

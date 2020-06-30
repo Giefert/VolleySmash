@@ -1,13 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class Main : MonoBehaviour
 {
-    public delegate void Tapped();
-    public static event Tapped onTapped;
-
-    // NEW TEST LINE 
+    public delegate void ActionTap();
+    public static event ActionTap onTap;
 
     /*
     * Get key input in Update to avoid input loss that happens in FixedUpdate
@@ -15,11 +14,11 @@ public class Main : MonoBehaviour
     */
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            if(onTapped != null)
+            if (onTap != null)
             {
-
+                onTap();
             }
         }
     }
