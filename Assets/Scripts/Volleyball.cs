@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /*
@@ -12,7 +14,7 @@ using UnityEngine;
 public class Volleyball : MonoBehaviour
 {
     // Check player state. There are 3 - Ball is reset, layed-up, or spiked.
-    private enum State { Returned, Bounced, Spiked }
+    public enum State { Returned, Bounced, Spiked }
     private State state;
     public Vector2 bounceVelocity;
     public Vector2 spikeVelocity;
@@ -21,11 +23,12 @@ public class Volleyball : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        state = State.Returned;
+        state = State.Spiked;
         bounceVelocity = new Vector2(0.2f, 15.0f);
         spikeVelocity = new Vector2(25.0f, 0.5f);
 
-        Main.onTap += HitBall;
+        Main.onSignal += HitBall;
+        Main.onTap += ChangeState;
     }
 
     private void Update()
@@ -81,7 +84,6 @@ public class Volleyball : MonoBehaviour
                 /* OR */
                 //rb.AddForce(bounceVelocity, ForceMode2D.Impulse);
 
-                state = State.Bounced;
                 break;
             case State.Bounced:
                 // Change velocity to be mostly headed rightwards
@@ -94,6 +96,27 @@ public class Volleyball : MonoBehaviour
                 // Call the delegate using event
                 break;
         }
+    }
+    
+    // Loops through the ball's states.
+    private void ChangeState()
+    {
+        int currentState = Array.IndexOf(Enum.GetValues(state.GetType()), state); // this returns index value of state var
+        Debug.Log("State: " + currentState);
+
+        if (currentState >= 2)
+        {
+            currentState = 0;
+        }
+        else
+        {
+            currentState++;
+        }
+
+        State whatIsThis = (State)(Enum.GetValues(state.GetType())).GetValue(currentState); // this returns string value of state var
+        Debug.Log("This is: " + whatIsThis);
+
+        state = whatIsThis;
     }
 
     private void OnDisable()
