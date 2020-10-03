@@ -8,7 +8,7 @@ public class Deathbox : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         volleyball.SetActive(false);
-        Debug.Log("Restart");
+        //Debug.Log("Restart");
     }
 
 }

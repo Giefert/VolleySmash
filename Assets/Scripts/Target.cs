@@ -18,7 +18,7 @@ public class Target : MonoBehaviour
     // Changes target's position
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("OK HIT");
+        //Debug.Log("OK HIT");
         TargetBreak();
         BallBounce();
     }

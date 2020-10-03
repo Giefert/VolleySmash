@@ -14,18 +14,17 @@ public class Volleyball : MonoBehaviour
     public Vector2 bounceVelocity = new Vector2(0.2f, 15.0f);
     public Vector2 spikeVelocity = new Vector2(25.0f, 0.5f);
     private Rigidbody2D rb;
-    public bool ballLocked = false;
+    private bool bBallLocked = false;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        state = State.Returned;
     }
 
 
     private void Update()
     {
-        if (!ballLocked)
+        if (state != State.Spiked)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -34,16 +33,6 @@ public class Volleyball : MonoBehaviour
             }
         }
     }
-
-
-
-
-    private void FixedUpdate()
-    {
-        // Change ball trajectory after receiving signal from Update
-
-    }
-
 
     #region HitBall summary
     ///<summary>
@@ -80,22 +69,22 @@ public class Volleyball : MonoBehaviour
                 //rb.AddForce(spikeVelocity, ForceMode2D.Impulse);
                 break;
             case State.Spiked:
-                // Lock the ball
+                // Do nothing
                 break;
         }
     }
 
-    
     
     // Loops through the ball's states.
     private State ChangeState()
     {
         var enumArray = Enum.GetValues(state.GetType());
         int arraySize = enumArray.Length;
+        //int arraySize = 2;
 
         // Debug message (State: #)
         int currentStateNum = Array.IndexOf(enumArray, state); // To allow incrementing through the index this returns the current index value of state enum
-        Debug.Log("State: " + currentStateNum);
+        //Debug.Log("State: " + currentStateNum);
 
         // Loop ball states in order 0, 1, 2, 0...
         currentStateNum = ++currentStateNum % arraySize;
@@ -114,11 +103,25 @@ public class Volleyball : MonoBehaviour
         state = State.Returned;
     }
 
-    private void OnDisable()
+    public void UnlockBall()
     {
-
-
+        state = State.Returned;
     }
+
+    /* Do I need this code?
+     * 
+     * 
+        public void SetBallState(State newState)
+        {
+            state = newState;
+        }
+
+        public State GetBallState()
+        {
+            return state;
+        }
+    *
+    */
 
     #region Obsolete signal code
     //private void Start()
