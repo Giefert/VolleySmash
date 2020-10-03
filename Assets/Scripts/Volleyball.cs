@@ -1,51 +1,40 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Resources;
 using UnityEngine;
 
-/*
- **CHECKLIST**
- * Input
- * Reactions to boundaries and targets
- * Define states and trigger events
- */
 
 public class Volleyball : MonoBehaviour
 {
     // Check player state. There are 3 - Ball is reset, layed-up, or spiked.
-    private enum State { Returned, Bounced, Spiked }
+    public enum State { Returned, Bounced, Spiked }
     private State state;
-    public Vector2 bounceVelocity;
-    public Vector2 spikeVelocity;
+    public Vector2 bounceVelocity = new Vector2(0.2f, 15.0f);
+    public Vector2 spikeVelocity = new Vector2(25.0f, 0.5f);
     private Rigidbody2D rb;
+    private bool bBallLocked = false;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        state = State.Returned;
-        bounceVelocity = new Vector2(0.2f, 15.0f);
-        spikeVelocity = new Vector2(25.0f, 0.5f);
-
-        Main.onTapped += BallTap;
-
     }
+
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        BallTap();
+        if (state != State.Spiked)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                HitBall();
+                ChangeState();
+            }
+        }
     }
 
-    private void FixedUpdate()
-    {
-        // Change ball trajectory after receiving signal from Update
-
-    }
-
-
-
-
-
-
+    #region HitBall summary
     ///<summary>
     /// BallTap() behavior.
     /// Starting state
@@ -62,14 +51,8 @@ public class Volleyball : MonoBehaviour
     /// 
     /// Return to starting state
     /// </summary>
-
-
-    /* 
-     * Do I need to seperate the physics action from the state update into two methods?
-     * (one for Update and FixedUpdate each)
-     */
-
-    private void BallTap()
+    #endregion // TITLE
+    private void HitBall()
     {
         switch (state)
         {
@@ -78,8 +61,6 @@ public class Volleyball : MonoBehaviour
                 rb.velocity = bounceVelocity;
                 /* OR */
                 //rb.AddForce(bounceVelocity, ForceMode2D.Impulse);
-
-                state = State.Bounced;
                 break;
             case State.Bounced:
                 // Change velocity to be mostly headed rightwards
@@ -88,15 +69,71 @@ public class Volleyball : MonoBehaviour
                 //rb.AddForce(spikeVelocity, ForceMode2D.Impulse);
                 break;
             case State.Spiked:
-                
-                // Call the delegate using event
+                // Do nothing
                 break;
         }
     }
 
-    private void OnDisable()
+    
+    // Loops through the ball's states.
+    private State ChangeState()
     {
-        Main.onTapped -= BallTap;
+        var enumArray = Enum.GetValues(state.GetType());
+        int arraySize = enumArray.Length;
+        //int arraySize = 2;
+
+        // Debug message (State: #)
+        int currentStateNum = Array.IndexOf(enumArray, state); // To allow incrementing through the index this returns the current index value of state enum
+        //Debug.Log("State: " + currentStateNum);
+
+        // Loop ball states in order 0, 1, 2, 0...
+        currentStateNum = ++currentStateNum % arraySize;
+
+        // Debug message (This is CURRENT_STATE)
+        State currentStateName = (State)enumArray.GetValue(currentStateNum); // this returns string value of state var
+        Debug.Log("This is: " + currentStateName);
+
+        // Updates and returns the current state of the ball 
+        state = currentStateName;
+        return state;
     }
 
+    private void OnEnable()
+    {
+        state = State.Returned;
+    }
+
+    public void UnlockBall()
+    {
+        state = State.Returned;
+    }
+
+    /* Do I need this code?
+     * 
+     * 
+        public void SetBallState(State newState)
+        {
+            state = newState;
+        }
+
+        public State GetBallState()
+        {
+            return state;
+        }
+    *
+    */
+
+    #region Obsolete signal code
+    //private void Start()
+    //{
+    //Main.onSignal += HitBall;
+    //Main.onTap += ChangeState;
+    //}
+
+
+    //private void OnDisable()
+    //{
+    //Main.onTap -= HitBall;
+    //}
+    #endregion
 }
