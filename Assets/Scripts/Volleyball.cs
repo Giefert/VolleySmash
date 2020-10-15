@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
 using UnityEngine;
 
 
@@ -11,9 +9,10 @@ public class Volleyball : MonoBehaviour
     // Check player state. There are 3 - Ball is reset, layed-up, or spiked.
     public enum State { Returned, Bounced, Spiked }
     private State state;
-    public Vector2 bounceVelocity = new Vector2(0.2f, 15.0f);
-    public Vector2 spikeVelocity = new Vector2(25.0f, 0.5f);
+    [SerializeField] private Vector2 bounceVelocity = new Vector2(0.2f, 15.0f);
+    [SerializeField] private Vector2 spikeVelocity = new Vector2(40.0f, -1.0f);
     private Rigidbody2D rb;
+    [SerializeField] private Main _main;
     private bool bBallLocked = false;
 
     private void Start()
@@ -33,6 +32,7 @@ public class Volleyball : MonoBehaviour
             }
         }
     }
+    
 
     #region HitBall summary
     ///<summary>
@@ -52,6 +52,7 @@ public class Volleyball : MonoBehaviour
     /// Return to starting state
     /// </summary>
     #endregion // TITLE
+    // Simulate hitting the ball depending on it's state
     private void HitBall()
     {
         switch (state)
@@ -74,7 +75,6 @@ public class Volleyball : MonoBehaviour
         }
     }
 
-    
     // Loops through the ball's states.
     private State ChangeState()
     {
@@ -98,15 +98,23 @@ public class Volleyball : MonoBehaviour
         return state;
     }
 
+    public void UnlockBall()
+    {
+        state = State.Returned;
+    }
+
     private void OnEnable()
     {
         state = State.Returned;
     }
 
-    public void UnlockBall()
+    private void OnDisable()
     {
-        state = State.Returned;
+        //_main.StartCoroutine("ShowMenu", 0.5f);
+        _main.ShowMenu_old();
     }
+
+
 
     /* Do I need this code?
      * 

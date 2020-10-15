@@ -4,23 +4,20 @@ using UnityEngine;
 
 public class Target : MonoBehaviour
 {
-    [SerializeField] private Vector2 bouncebackVelocity = new Vector2(-20.0f, 1.0f);
+    [SerializeField] private Vector2 bouncebackVelocity = new Vector2(-30.0f, 2.0f);
     private float targetPosY = 0;
     private Vector2 targetNewPosition;
-    // XXX private GameObject volleyball;
-    [SerializeField] private Rigidbody2D volleyballRb;
+    [SerializeField] private Rigidbody2D _volleyballRb;
+    [SerializeField] private Main _main;
 
-    private void Start()
-    {
-
-    }
-
-    // Changes target's position
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //Debug.Log("OK HIT");
         TargetBreak();
         BallBounce();
+        _main.UpdateScore();
+        Debug.Log("Ball height = " + _volleyballRb.transform.position.y);
+        
     }
 
     void TargetBreak()
@@ -32,7 +29,7 @@ public class Target : MonoBehaviour
 
     void BallBounce()
     {
-        volleyballRb.velocity = bouncebackVelocity;
+        _volleyballRb.velocity = bouncebackVelocity;
 
     }
 
