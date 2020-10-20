@@ -7,6 +7,7 @@ public class Target : MonoBehaviour
     [SerializeField] private Vector2 bouncebackVelocity = new Vector2(-30.0f, 2.0f);
     private float targetPosY = 0;
     private Vector2 targetNewPosition;
+    [SerializeField] private Volleyball _volleyball;
     [SerializeField] private Rigidbody2D _volleyballRb;
     [SerializeField] private Main _main;
 
@@ -16,7 +17,7 @@ public class Target : MonoBehaviour
         TargetBreak();
         BallBounce();
         _main.UpdateScore();
-        Debug.Log("Ball height = " + _volleyballRb.transform.position.y);
+        Debug.Log("Ball height @ target = " + _volleyballRb.transform.position.y);
         
     }
 
@@ -30,7 +31,7 @@ public class Target : MonoBehaviour
     void BallBounce()
     {
         _volleyballRb.velocity = bouncebackVelocity;
-
+        _volleyball.SpinBall(_volleyball.spinRotation);
     }
 
 

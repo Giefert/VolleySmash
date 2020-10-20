@@ -14,7 +14,7 @@ public class ReturnNet : MonoBehaviour
     {
         _volleyball.UnlockBall();
         SetCatchVelocity(netCatchVelocity);
-        Debug.Log("Ball height = " + _volleyballRb.transform.position.y);
+        Debug.Log("Ball height @ net = " + _volleyballRb.transform.position.y);
     }
 
     private Vector2 SetCatchVelocity(Vector2 velocity)

@@ -14,6 +14,8 @@ public class Volleyball : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField] private Main _main;
     private bool bBallLocked = false;
+    [SerializeField] private GameObject ballModel;
+    public Vector3 spinRotation;
 
     private void Start()
     {
@@ -23,6 +25,7 @@ public class Volleyball : MonoBehaviour
 
     private void Update()
     {
+        SpinBall(spinRotation);
         if (state != State.Spiked)
         {
             if (Input.GetMouseButtonDown(0))
@@ -52,27 +55,54 @@ public class Volleyball : MonoBehaviour
     /// Return to starting state
     /// </summary>
     #endregion // TITLE
-    // Simulate hitting the ball depending on it's state
+    // Simulate hitting the ball depending on it's state while applying spin
     private void HitBall()
     {
         switch (state)
         {
             case State.Returned:
-                // Change velocity to be mostly upwards
+                // Applies velocity to be mostly upwards
                 rb.velocity = bounceVelocity;
+                spinRotation = BallSpin(0.0f);
+                Debug.Log(state);
                 /* OR */
                 //rb.AddForce(bounceVelocity, ForceMode2D.Impulse);
                 break;
             case State.Bounced:
-                // Change velocity to be mostly headed rightwards
+                // Applies velocity to be mostly headed rightwards
                 rb.velocity = spikeVelocity;
+                spinRotation = BallSpin(0.5f);
+                Debug.Log(state);
                 /* OR */
                 //rb.AddForce(spikeVelocity, ForceMode2D.Impulse);
                 break;
             case State.Spiked:
-                // Do nothing
+                // No actions
+                spinRotation = BallSpin(3.0f);
                 break;
         }
+    }
+
+    private Vector3 BallSpin(float spinSpeed)
+    {
+        //float spinSpeed;
+
+        switch (state)
+        {
+            case State.Returned:
+                spinRotation = SpinDirection(spinSpeed);
+                Debug.Log("spinSpeed is : " + spinSpeed);
+                break;
+            case State.Bounced:
+                spinRotation = SpinDirection(spinSpeed);
+                Debug.Log("spinSpeed is : " + spinSpeed);
+                break;
+            case State.Spiked:
+                spinRotation = SpinDirection(spinSpeed);
+                Debug.Log("spinSpeed is : " + spinSpeed);
+                break;
+        }
+        return spinRotation;
     }
 
     // Loops through the ball's states.
@@ -91,11 +121,30 @@ public class Volleyball : MonoBehaviour
 
         // Debug message (This is CURRENT_STATE)
         State currentStateName = (State)enumArray.GetValue(currentStateNum); // this returns string value of state var
-        Debug.Log("This is: " + currentStateName);
+        //Debug.Log("This is: " + currentStateName);
 
         // Updates and returns the current state of the ball 
         state = currentStateName;
         return state;
+    }
+
+    public void SpinBall(Vector3 spinRotation)
+    {
+        ballModel.transform.Rotate(spinRotation);
+    }
+
+    private Vector3 SpinDirection(float speed)
+    {
+        var X_AXIS = SpinSpeed(-speed, speed);
+        var Y_AXIS = SpinSpeed(-speed, speed);
+        var Z_AXIS = SpinSpeed(-speed, speed);
+
+        return new Vector3(Z_AXIS, Y_AXIS, Z_AXIS);
+    }
+
+    private float SpinSpeed(float min, float max)
+    {
+        return UnityEngine.Random.Range(min, max);
     }
 
     public void UnlockBall()
@@ -103,6 +152,13 @@ public class Volleyball : MonoBehaviour
         state = State.Returned;
     }
 
+    public void ResetBall()
+    {
+        var resetBall = new Vector3(0, 0, 0);
+        spinRotation = resetBall;
+
+        ballModel.transform.rotation = Quaternion.Euler(resetBall);
+    }
     private void OnEnable()
     {
         state = State.Returned;
@@ -110,6 +166,7 @@ public class Volleyball : MonoBehaviour
 
     private void OnDisable()
     {
+        ResetBall();
         //_main.StartCoroutine("ShowMenu", 0.5f);
         _main.ShowMenu_old();
     }

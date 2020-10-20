@@ -9,8 +9,9 @@ public class Main : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private Rigidbody2D playerRb;
     [SerializeField] private Vector3 playerSpawnPos = new Vector3(-7.5f, -3.5f, 0.0f);
+    [SerializeField] private Vector2 playerResetVelocty = new Vector2(0.0f, 0.0f);
     [SerializeField] private GameObject target;
-    [SerializeField] private Vector3 spawnTargetPos = new Vector3(7.66f, 0.0f, 0.0f);
+    [SerializeField] private Vector3 targetSpawnPos = new Vector3(7.66f, 0.0f, 0.0f);
     Color32 colorOrange = new Color32(255, 165, 0, 255);
     private int score;
     private int highscore;
@@ -50,7 +51,10 @@ public class Main : MonoBehaviour
     {
         menu.SetActive(false);
         player.transform.position = playerSpawnPos;
+        player.SetActive(false);
+        //playerRb.velocity = playerResetVelocty;
         player.SetActive(true);
+        target.transform.position = targetSpawnPos;
         score = 0;
         scoreText.color = Color.white;
         DisplayScore();
